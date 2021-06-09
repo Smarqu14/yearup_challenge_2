@@ -272,5 +272,8 @@ def main():
     # for extra SQL challenge, feel free to comment this out if you don't need the CSV file
     save_filtered_tweets_to_csv(tweet_data_list)
 
+print('hello')
+
+
 if __name__ == '__main__':
     main()
