@@ -12,6 +12,7 @@ TWEET_LOG_DIR_NAME = 'data/yearup_challenge/'
 
 
 def get_weekday_metrics_for_all_tweets(tweet_data_list):
+    # print(tweet_data_list, 'weekly')
     weekday_metrics = {}
 
     for tweet_data in tweet_data_list:
@@ -73,10 +74,29 @@ def get_tweet_user_count(tweet_data_list):
 
     return user_count_metrics
 
+    # TODO METRIC 1) number of tweets for each cve
 
-# TODO: Update print_tweet_data_metrics to include each of the requested challenge metrics
+
+def number_of_tweets_for_each_cve(tweet_data_list):
+    # This function filteres out the tweets
+    filtered_tweets = filter_tweet_data(tweet_data_list)
+    num_tweets_cve = {}
+
+    for tweet in filtered_tweets:
+        tweet_cve = tweet['cve']
+
+        if tweet_cve in num_tweets_cve:
+            num_tweets_cve[tweet_cve] += 1
+        else:
+            num_tweets_cve[tweet_cve] = 1
+
+        # TODO: Update print_tweet_data_metrics to include each of the requested challenge metrics
+    # this dictionary contains all of the number of tweets in every cve
+    return num_tweets_cve
+
+
 def print_tweet_data_metrics(tweet_data_list):
-
+    # print(tweet_data_list[1])
     # ----- EXAMPLES -------#
 
     # call your function that computes the metric (you'll need to write the function above)
@@ -84,28 +104,31 @@ def print_tweet_data_metrics(tweet_data_list):
     # print the metric name/headline
     print("DAY OF THE WEEK METRICS (total tweet count for each day")
     # print the metric file
-    pretty_print(weekday_metrics)
+    # pretty_print(weekday_metrics)
 
     # call your function that computes the metric (you'll need to write the function above)
     weekday_metrics_per_tweet = get_weekday_metrics_for_by_cve(tweet_data_list)
     # print the metric name/headline
     print("DAY OF THE WEEK METRICS (count per tweet")
     # print the metric file
-    pretty_print(weekday_metrics_per_tweet)
+    # pretty_print(weekday_metrics_per_tweet)
 
     # call your function that computes the metric (you'll need to write the function above)
     tweeter_count = get_tweet_user_count(tweet_data_list)
     # print the metric name/headline
     print("USER COUNT METRICS (number of tweets by user)")
     # print the metric file
-    pretty_print(tweeter_count)
+    # pretty_print(tweeter_count)
 
     # ----- END EXAMPLES -------#
 
     # TODO: insert your code to fill out the metrics report, use the examples above for inspiration
 
+    print("TOTAL NUMBER OF TWEETS FOR EACH CVE")
+    pretty_print(number_of_tweets_for_each_cve(tweet_data_list))
 
-# TODO: remove tweets from the list that have cve set to '' (empty), because they didn't have a valid CVE
+
+# CompletedTODO: remove tweets from the list that have cve set to '' (empty), because they didn't have a valid CVE
 # see extract_data_from_tweet_json where cve was extracted from text for reference
 def filter_tweet_data(tweet_data_list):
     filtered_list = []
@@ -115,7 +138,7 @@ def filter_tweet_data(tweet_data_list):
         tweet_cve = tweet['cve']
         # print(tweet_cve, 'item property in dictionary')
 
-        # Steve: we are looping over the list and if we encounte a cve property in the dictionary equal to ' ' delete it from the list
+        # Steve: we are looping over the list and if we encounter a cve property in the dictionary equal to ' ' delete it from the list
 
         if tweet_cve == '':
             tweet_data_list.remove(tweet)
@@ -283,7 +306,6 @@ def main():
 
     # process all tweet logs in tweet log directory
     tweet_data_list = process_tweet_log_files(list_of_tweet_log_paths)
-
     print_tweet_data_metrics(tweet_data_list)
 
     # for extra SQL challenge, feel free to comment this out if you don't need the CSV file
