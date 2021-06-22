@@ -170,6 +170,26 @@ def count_cev_from_release_year(tweet_data_list):
     return cve_years
 
 
+def avg_num_tweets_for_user(tweet_data_list):
+    filtered_tweets = filter_tweet_data(tweet_data_list)
+    avg_tweets = {}
+
+    for tweets in filtered_tweets:
+        username = tweets['user_screen_name']
+        avg = []
+        totalavg = 0
+
+        if username in avg_tweets:
+            avg.append(tweets['user_statuses_count'])
+            for status in avg:
+                totalavg += status
+            avg_tweets[username] = totalavg / len(avg)
+        else:
+            avg_tweets[username] = tweets['user_statuses_count']
+
+    return avg_tweets
+
+
 def print_tweet_data_metrics(tweet_data_list):
     # print(tweet_data_list[1])
     # ----- EXAMPLES -------#
@@ -213,6 +233,9 @@ def print_tweet_data_metrics(tweet_data_list):
 
     print('count of CVEs from each CVE release year (using the year in the CVE number)'.upper())
     # pretty_print(count_cev_from_release_year(tweet_data_list))
+
+    print("average number of tweets for each user (user_status_count is the number of tweets they've sent)".upper())
+    pretty_print(avg_num_tweets_for_user(tweet_data_list))
 
 
 # CompletedTODO: remove tweets from the list that have cve set to '' (empty), because they didn't have a valid CVE
