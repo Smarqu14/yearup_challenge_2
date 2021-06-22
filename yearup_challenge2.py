@@ -76,6 +76,8 @@ def get_tweet_user_count(tweet_data_list):
 
     # TODO METRIC 1) number of tweets for each cve
 
+########### Functions created by me Steve:############
+
 
 def number_of_tweets_for_each_cve(tweet_data_list):
     # This function filteres out the tweets
@@ -114,6 +116,22 @@ def popular_day_of_week(tweet_data_list):
             return key
 
 
+def total_number_of_followers(tweet_data_list):
+    filtered_tweets = filter_tweet_data(tweet_data_list)
+    total_who_saw_tweet = {}
+
+    for tweet in filtered_tweets:
+        tweet_cve = tweet['cve']
+        followers_count = tweet['user_followers_count']
+
+        if tweet_cve in total_who_saw_tweet:
+            total_who_saw_tweet[tweet_cve] += followers_count
+        else:
+            total_who_saw_tweet[tweet_cve] = followers_count
+
+    return total_who_saw_tweet
+
+
 def print_tweet_data_metrics(tweet_data_list):
     # print(tweet_data_list[1])
     # ----- EXAMPLES -------#
@@ -149,9 +167,13 @@ def print_tweet_data_metrics(tweet_data_list):
     print('MOST POPULAR DAY OF THE WEEK FOR ALL TWEETS')
     # pretty_print(popular_day_of_week(tweet_data_list))
 
+    print('TOTAL SUM OF FOLLOWERS WHO HAVE SEEN ANY TWEET FOR A CVE')
+    pretty_print(total_number_of_followers(tweet_data_list))
 
 # CompletedTODO: remove tweets from the list that have cve set to '' (empty), because they didn't have a valid CVE
 # see extract_data_from_tweet_json where cve was extracted from text for reference
+
+
 def filter_tweet_data(tweet_data_list):
     filtered_list = []
 
