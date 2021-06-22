@@ -132,6 +132,27 @@ def total_number_of_followers(tweet_data_list):
     return total_who_saw_tweet
 
 
+def number_of_cve_not_from_2020(tweet_data_list):
+    filtered_tweets = filter_tweet_data(tweet_data_list)
+    cve_years = {}
+    total_sum_not_from_2020 = 0
+
+    for tweet in filtered_tweets:
+        tweet_cve = tweet['cve']
+        tweet_text = tweet['text']
+
+        if 'CVE-2020' not in tweet_text:
+            if tweet_cve in cve_years:
+                cve_years[tweet_cve] = +1
+            else:
+                cve_years[tweet_cve] = 1
+
+    for cve in cve_years:
+        total_sum_not_from_2020 += cve_years[cve]
+
+    return total_sum_not_from_2020
+
+
 def print_tweet_data_metrics(tweet_data_list):
     # print(tweet_data_list[1])
     # ----- EXAMPLES -------#
@@ -168,7 +189,11 @@ def print_tweet_data_metrics(tweet_data_list):
     # pretty_print(popular_day_of_week(tweet_data_list))
 
     print('TOTAL SUM OF FOLLOWERS WHO HAVE SEEN ANY TWEET FOR A CVE')
-    pretty_print(total_number_of_followers(tweet_data_list))
+    # pretty_print(total_number_of_followers(tweet_data_list))
+
+    print('number of cves not from 2020'.upper())
+    pretty_print(number_of_cve_not_from_2020(tweet_data_list))
+
 
 # CompletedTODO: remove tweets from the list that have cve set to '' (empty), because they didn't have a valid CVE
 # see extract_data_from_tweet_json where cve was extracted from text for reference
