@@ -95,6 +95,25 @@ def number_of_tweets_for_each_cve(tweet_data_list):
     return num_tweets_cve
 
 
+def popular_day_of_week(tweet_data_list):
+    filtered_tweets = filter_tweet_data(tweet_data_list)
+    popular = {}
+
+    for tweet in filtered_tweets:
+        day = tweet['date_weekday']
+        if day in popular:
+            popular[day] += 1
+        else:
+            popular[day] = 1
+
+    popular_days_count = popular.values()
+    popular_day = max(popular_days_count)
+
+    for key in popular:
+        if popular[key] == popular_day:
+            return key
+
+
 def print_tweet_data_metrics(tweet_data_list):
     # print(tweet_data_list[1])
     # ----- EXAMPLES -------#
@@ -125,7 +144,10 @@ def print_tweet_data_metrics(tweet_data_list):
     # TODO: insert your code to fill out the metrics report, use the examples above for inspiration
 
     print("TOTAL NUMBER OF TWEETS FOR EACH CVE")
-    pretty_print(number_of_tweets_for_each_cve(tweet_data_list))
+    # pretty_print(number_of_tweets_for_each_cve(tweet_data_list))
+
+    print('MOST POPULAR DAY OF THE WEEK FOR ALL TWEETS')
+    # pretty_print(popular_day_of_week(tweet_data_list))
 
 
 # CompletedTODO: remove tweets from the list that have cve set to '' (empty), because they didn't have a valid CVE
