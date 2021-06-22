@@ -8,8 +8,9 @@ from datetime import datetime
 
 TWEET_LOG_DIR_NAME = 'data/yearup_challenge/'
 
-
 # EXAMPLE METRICS FUNCTION
+
+
 def get_weekday_metrics_for_all_tweets(tweet_data_list):
     weekday_metrics = {}
 
@@ -17,10 +18,10 @@ def get_weekday_metrics_for_all_tweets(tweet_data_list):
         weekday = tweet_data['date_weekday']
 
         # Check to see if we've already added this weekday before, otherwise we'll need to initialize it
-        if weekday in weekday_metrics: # this means we've already initialized this weekday, so we can just update it
+        if weekday in weekday_metrics:  # this means we've already initialized this weekday, so we can just update it
             # += 1 is a short way to say add one to the previous number
             weekday_metrics[weekday] += 1
-        else: #initialize metrics for the new weekday
+        else:  # initialize metrics for the new weekday
             weekday_metrics[weekday] = 1
 
     return weekday_metrics
@@ -41,15 +42,16 @@ def get_weekday_metrics_for_by_cve(tweet_data_list):
         weekday = tweet_data['date_weekday']
 
         # Check to see if we've already added this cve before, otherwise we'll need to initialize it
-        if cve not in weekday_metrics: # this means we've haven't initialized this cve yet so we'll need to
+        if cve not in weekday_metrics:  # this means we've haven't initialized this cve yet so we'll need to
             # initialize cve with an empty dictionary for the weekday metrics
             weekday_metrics[cve] = {}
 
         # Check to see if we've already added this weekday before, otherwise we'll need to initialize it
-        if weekday in weekday_metrics[cve]: # this means we've already initialized this weekday, so we can just update it
+        # this means we've already initialized this weekday, so we can just update it
+        if weekday in weekday_metrics[cve]:
             # += 1 is a short way to say add one to the previous number
             weekday_metrics[cve][weekday] += 1
-        else: # initialize metrics for the new weekday
+        else:  # initialize metrics for the new weekday
             weekday_metrics[cve][weekday] = 1
 
     return weekday_metrics
@@ -63,10 +65,10 @@ def get_tweet_user_count(tweet_data_list):
         username = tweet_data['user_screen_name']
 
         # Check to see if we've already added this weekday before, otherwise we'll need to initialize it
-        if username in user_count_metrics: # this means we've already initialized this weekday, so we can just update it
+        if username in user_count_metrics:  # this means we've already initialized this weekday, so we can just update it
             # += 1 is a short way to say add one to the previous number
             user_count_metrics[username] += 1
-        else: #initialize metrics for the new weekday
+        else:  # initialize metrics for the new weekday
             user_count_metrics[username] = 1
 
     return user_count_metrics
@@ -109,11 +111,20 @@ def filter_tweet_data(tweet_data_list):
     filtered_list = []
 
     for tweet in tweet_data_list:
+        # print(tweet, 'ITEMM in the list which is a dictionary', )
         tweet_cve = tweet['cve']
+        # print(tweet_cve, 'item property in dictionary')
+
+        # Steve: we are looping over the list and if we encounte a cve property in the dictionary equal to ' ' delete it from the list
+
+        if tweet_cve == '':
+            tweet_data_list.remove(tweet)
+        else:
+            filtered_list.append(tweet)
+
         # "append" tweet to filtered_list if tweet_cve is not equal to '' (blank)
         # TODO: add your code here to "append" ONLY valid _tweets_ to the filtered_list
         #       (be sure to append the full tweet, not tweet_cve)
-
 
     return filtered_list
 
@@ -130,15 +141,15 @@ def convert_weekday_num_to_string(weekday_num):
     weekday_string = ""
     if weekday_num == 0:
         weekday_string = 'Monday'
-    elif  weekday_num == 1:
+    elif weekday_num == 1:
         weekday_string = 'Tuesday'
     elif weekday_num == 2:
         weekday_string = 'Wednesday'
-    elif  weekday_num == 3:
+    elif weekday_num == 3:
         weekday_string = 'Thursday'
     elif weekday_num == 4:
         weekday_string = 'Friday'
-    elif  weekday_num == 5:
+    elif weekday_num == 5:
         weekday_string = 'Saturday'
     elif weekday_num == 6:
         weekday_string = 'Sunday'
@@ -171,7 +182,8 @@ def extract_data_from_tweet_json(tweet_json):
     # Convert create_at string format to our desired format YEAR/MONTH/DAY
     # date_str = datetime.today().strftime('%Y-%m-%d')
     # "created_at": "Wed Oct 10 20:19:24 +0000 2018"
-    created_at_datetime = datetime.strptime(tweet_json['created_at'], '%a %b %d %H:%M:%S +0000 %Y')
+    created_at_datetime = datetime.strptime(
+        tweet_json['created_at'], '%a %b %d %H:%M:%S +0000 %Y')
     created_at_date = created_at_datetime.date()
     date_str = datetime.strftime(created_at_datetime, '%Y/%m/%d')
     extracted_tweet_data['date'] = date_str
@@ -179,7 +191,8 @@ def extract_data_from_tweet_json(tweet_json):
     extracted_tweet_data['date_month'] = created_at_date.month
     extracted_tweet_data['date_day'] = created_at_date.day
     # Monday is 0 and Sunday is 6 - ref: https://docs.python.org/3/library/datetime.html
-    extracted_tweet_data['date_weekday'] = convert_weekday_num_to_string(created_at_date.weekday())
+    extracted_tweet_data['date_weekday'] = convert_weekday_num_to_string(
+        created_at_date.weekday())
 
     extracted_tweet_data['text'] = tweet_json['text']
     # extract first CVE from text (note: there may be multiple, but to simplify we'll only take the first)
@@ -234,9 +247,10 @@ def process_tweet_log_files(list_of_tweet_log_paths):
     for tweet_log_file_path in list_of_tweet_log_paths:
         processed_tweet_data = process_tweet_log_file(tweet_log_file_path)
         filtered_tweet_data = filter_tweet_data(processed_tweet_data)
+
         # INFO: uncomment below if you want to see the filtered tweets that were processed (good for debugging)
         # for tweet_data in filtered_tweet_data:
-        #     pretty_print(tweet_data)
+        #     pretty_print(tweet_data, 'Filtered data each item')
         # INFO: uncomment below if you want to see the size difference between the original and filtered lists (good for debugging)
         # print("{file}: size of original tweet data: {size}".format(file=tweet_log_file_path, size=len(processed_tweet_data)))
         # print("{file}: size of filtered tweet data: {size}".format(file=tweet_log_file_path, size=len(filtered_tweet_data)))
@@ -249,7 +263,8 @@ def save_filtered_tweets_to_csv(tweet_data_list):
     column_names = tweet_data_list[0].keys()
 
     with open("twitter_data.csv", 'w', encoding='utf-8') as csv_output_file:
-        csv_writer = csv.DictWriter(csv_output_file, fieldnames=column_names, quoting=csv.QUOTE_NONNUMERIC)
+        csv_writer = csv.DictWriter(
+            csv_output_file, fieldnames=column_names, quoting=csv.QUOTE_NONNUMERIC)
 
         # write header
         csv_writer.writeheader()
@@ -257,7 +272,8 @@ def save_filtered_tweets_to_csv(tweet_data_list):
         # write tweet data as rows
         for tweet_data in tweet_data_list:
             # remove newlines from tweet text, replace double quotes with single quotes
-            tweet_data['text'] = tweet_data['text'].replace('\n', ' ').replace('"', '\'')
+            tweet_data['text'] = tweet_data['text'].replace(
+                '\n', ' ').replace('"', '\'')
             csv_writer.writerow(tweet_data)
 
 
@@ -267,10 +283,12 @@ def main():
 
     # process all tweet logs in tweet log directory
     tweet_data_list = process_tweet_log_files(list_of_tweet_log_paths)
+
     print_tweet_data_metrics(tweet_data_list)
 
     # for extra SQL challenge, feel free to comment this out if you don't need the CSV file
     save_filtered_tweets_to_csv(tweet_data_list)
+
 
 if __name__ == '__main__':
     main()
