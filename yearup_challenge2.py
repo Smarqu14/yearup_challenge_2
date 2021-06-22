@@ -76,8 +76,8 @@ def get_tweet_user_count(tweet_data_list):
 
     # TODO METRIC 1) number of tweets for each cve
 
-########### Functions created by me Steve:############
 
+########### Functions created by me Steve:############
 
 def number_of_tweets_for_each_cve(tweet_data_list):
     # This function filteres out the tweets
@@ -153,6 +153,23 @@ def number_of_cve_not_from_2020(tweet_data_list):
     return total_sum_not_from_2020
 
 
+def count_cev_from_release_year(tweet_data_list):
+    filtered_tweets = filter_tweet_data(tweet_data_list)
+    cve_years = {}
+
+    for tweet in filtered_tweets:
+        tweet_cve = tweet['cve']
+        tweet_text = tweet['text']
+
+        if 'CVE-2' in tweet_text:
+            if tweet_cve in cve_years:
+                cve_years[tweet_cve] = +1
+            else:
+                cve_years[tweet_cve] = 1
+
+    return cve_years
+
+
 def print_tweet_data_metrics(tweet_data_list):
     # print(tweet_data_list[1])
     # ----- EXAMPLES -------#
@@ -192,7 +209,10 @@ def print_tweet_data_metrics(tweet_data_list):
     # pretty_print(total_number_of_followers(tweet_data_list))
 
     print('number of cves not from 2020'.upper())
-    pretty_print(number_of_cve_not_from_2020(tweet_data_list))
+    # pretty_print(number_of_cve_not_from_2020(tweet_data_list))
+
+    print('count of CVEs from each CVE release year (using the year in the CVE number)'.upper())
+    # pretty_print(count_cev_from_release_year(tweet_data_list))
 
 
 # CompletedTODO: remove tweets from the list that have cve set to '' (empty), because they didn't have a valid CVE
